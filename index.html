@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Your Personal Info</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #00ff88;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 2rem;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 10px #00ff88;
+    }
+    .info {
+      font-size: 1.2rem;
+      margin: 0.5rem 0;
+      text-shadow: 0 0 5px #00ff88;
+    }
+    .modal {
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #f2f2f2;
+      color: #000;
+      font-family: Arial, sans-serif;
+      border: 1px solid #ccc;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      padding: 1rem;
+      z-index: 9999;
+      width: 320px;
+      text-align: left;
+    }
+    .modal button {
+      background-color: #0078d7;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+    .modal button:hover {
+      background-color: #005fa3;
+    }
+  </style>
+</head>
+<body>
+  <h1>💾 SYSTEM TRACE: PERSONAL INFO</h1>
+  <div class="info" id="ip">IP: loading…</div>
+  <div class="info" id="location">Location: loading…</div>
+  <div class="info" id="timezone">Timezone: loading…</div>
+  <div class="info" id="isp">ISP: loading…</div>
+  <div class="info" id="ua">Browser: loading…</div>
+  <div class="info" id="battery">Battery: loading…</div>
+  <div class="info" id="threat">Threat Level: analyzing…</div>
+  <div class="info" id="log">Log: initializing…</div>
+  <div class="info" id="tokens">Tokens Remaining: 998</div>
+
+  <script>
+    const apiKey = 'at_mUusUt79xKLm6dAViaED7X9rDoofk'; // ← Your geo.ipify key
+
+    // IP/location fetch
+    fetch(`https://geo.ipify.org/api/v2/country,city?apiKey=${apiKey}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('ip').textContent = 'IP: ' + data.ip;
+        document.getElementById('location').textContent =
+          'Location: ' + data.location.city + ', ' + data.location.region + ', ' + data.location.country;
+        document.getElementById('timezone').textContent =
+          'Timezone: ' + data.location.timezone;
+        document.getElementById('isp').textContent = 'ISP: ' + data.isp;
+      })
+      .catch(() => {
+        document.getElementById('ip').textContent = 'IP: unavailable';
+        document.getElementById('location').textContent = 'Location: unavailable';
+        document.getElementById('timezone').textContent = 'Timezone: unavailable';
+        document.getElementById('isp').textContent = 'ISP: unavailable';
+      });
+
+    // Browser info
+    const ua = navigator.userAgent;
+    document.getElementById('ua').textContent = 'Browser: ' + ua;
+
+    // Battery info
+    if ('getBattery' in navigator) {
+      navigator.getBattery().then(batt => {
+        document.getElementById('battery').textContent =
+          'Battery: ' + Math.round(batt.level * 100) + '%';
+      });
+    } else {
+      document.getElementById('battery').textContent = 'Battery: not supported';
+    }
+
+    // Threat level simulation
+    setTimeout(() => {
+      document.getElementById('threat').textContent = 'Threat Level: MODERATE ⚠️';
+    }, 2000);
+
+    // Terminal log simulation
+    const logs = [
+      '> SYSTEM TRACE ENGAGED',
+      '> NODE BREACHED',
+      '> ISP FLAGGED',
+      '> GEOLOCATING…',
+      '> TRACE COMPLETE ✔'
+    ];
+    let i = 0;
+    const logInterval = setInterval(() => {
+      if (i < logs.length) {
+        document.getElementById('log').textContent = logs[i];
+        i++;
+      } else {
+        clearInterval(logInterval);
+      }
+    }, 1000);
+
+    // Token meter
+    let tokens = 998;
+    const tokenInterval = setInterval(() => {
+      tokens--;
+      document.getElementById('tokens').textContent = 'Tokens Remaining: ' + tokens;
+      if (tokens <= 0) {
+        clearInterval(tokenInterval);
+        document.getElementById('tokens').textContent = 'Tokens Remaining: 0 ⚠️';
+      }
+    }, 150);
+
+    // Browser detection + fake modal
+    function getBrowser() {
+      if (ua.includes("Chrome") && !ua.includes("Edg")) return "Chrome";
+      if (ua.includes("Firefox")) return "Firefox";
+      if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari";
+      if (ua.includes("Edg")) return "Edge";
+      return "Unknown";
+    }
+
+    setTimeout(() => {
+      const browser = getBrowser();
+      if (browser !== "Unknown") {
+        const modal = document.createElement("div");
+        modal.className = "modal";
+        modal.innerHTML = `
+          <strong>⚠️ Security Threat Detected</strong><br><br>
+          Suspicious activity has been detected in ${browser}.<br>
+          Click below to resolve immediately.<br><br>
+          <button id="resolveBtn">Resolve</button>
+        `;
+        document.body.appendChild(modal);
+        document.getElementById("resolveBtn").onclick = () => {
+          window.location.href = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
+        };
+      }
+    }, 5000);
+  </script>
+</body>
+</html>
